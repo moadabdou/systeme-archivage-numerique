@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Response, status
 from pydantic import BaseModel
 from typing import List
 from fastapi.staticfiles import StaticFiles
@@ -52,6 +52,39 @@ def create_employee(payload: CreateEmployeePayload):
 
     mock_employees.append(new_employee)
     return new_employee
+
+@app.delete("/api/employees/{employee_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_employee(employee_id: int):
+    """
+    Delete an employee record by its ID.
+    """
+    global mock_employees
+    employee_to_delete = next((emp for emp in mock_employees if emp.id == employee_id), None)
+
+    if not employee_to_delete:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Employee with id {employee_id} not found")
+
+    mock_employees = [emp for emp in mock_employees if emp.id != employee_id]
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.put("/api/employees/{employee_id}", response_model=Employee)
+def update_employee(employee_id: int, payload: CreateEmployeePayload):
+    """
+    Update an existing employee's details.
+    """
+    global mock_employees
+    employee_to_update = next((emp for emp in mock_employees if emp.id == employee_id), None)
+
+    if not employee_to_update:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Employee with id {employee_id} not found")
+
+    # Update the fields
+    employee_to_update.name = payload.name
+    employee_to_update.cin = payload.cin
+    employee_to_update.post = payload.post
+    employee_to_update.status = payload.status
+
+    return employee_to_update
 
 # --- Serve Frontend ---
 # This must be mounted after all API routes.

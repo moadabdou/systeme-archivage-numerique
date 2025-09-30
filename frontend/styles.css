@@ -95,7 +95,11 @@ section h3 {
     background-color: #218838;
 }
 
+/* --- Employee Card Styles --- */
 .employee-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border: 1px solid #ddd;
     padding: 15px;
     margin-bottom: 10px;
@@ -103,11 +107,34 @@ section h3 {
     background-color: #f9f9f9;
 }
 
-.employee-card h4 {
+.employee-details h4 {
     margin: 0 0 10px 0;
     color: #004a99;
 }
 
-.employee-card p {
+.employee-details p {
     margin: 5px 0;
+}
+
+.employee-actions button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: opacity 0.3s ease;
+}
+
+.employee-actions button:hover {
+    opacity: 0.85;
+}
+
+.edit-btn {
+    background-color: #ffc107; /* Yellow */
+}
+
+.delete-btn {
+    background-color: #dc3545; /* Red */
 }
