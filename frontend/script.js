@@ -1,16 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     const employeeListContainer = document.getElementById('employee-list-container');
+    const addEmployeeForm = document.getElementById('add-employee-form');
 
-    // Fetch employee data from the backend API
-    fetch('/api/employees')
-        .then(response => {
+    /**
+     * Fetches employees from the API and displays them on the page.
+     */
+    const fetchAndDisplayEmployees = async () => {
+        try {
+            const response = await fetch('/api/employees');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            return response.json();
-        })
-        .then(employees => {
-            // Clear the "Loading..." message
+            const employees = await response.json();
+
+            // Clear the container
             employeeListContainer.innerHTML = '';
 
             if (employees.length === 0) {
@@ -22,29 +25,52 @@ document.addEventListener('DOMContentLoaded', () => {
             employees.forEach(employee => {
                 const card = document.createElement('div');
                 card.className = 'employee-card';
-
-                const name = document.createElement('h4');
-                name.textContent = employee.name;
-
-                const cin = document.createElement('p');
-                cin.textContent = `CIN: ${employee.cin}`;
-
-                const post = document.createElement('p');
-                post.textContent = `Poste: ${employee.post}`;
-
-                const status = document.createElement('p');
-                status.textContent = `Statut: ${employee.status}`;
-
-                card.appendChild(name);
-                card.appendChild(cin);
-                card.appendChild(post);
-                card.appendChild(status);
-
+                card.innerHTML = `
+                    <h4>${employee.name}</h4>
+                    <p><strong>CIN:</strong> ${employee.cin}</p>
+                    <p><strong>Poste:</strong> ${employee.post}</p>
+                    <p><strong>Statut:</strong> ${employee.status}</p>
+                `;
                 employeeListContainer.appendChild(card);
             });
-        })
-        .catch(error => {
-            employeeListContainer.innerHTML = `<p>Error loading employee data: ${error.message}. Is the backend server running?</p>`;
+        } catch (error) {
+            employeeListContainer.innerHTML = `<p>Error loading employee data: ${error.message}.</p>`;
             console.error('Error fetching employee data:', error);
-        });
+        }
+    };
+
+    /**
+     * Handles the submission of the "Add Employee" form.
+     */
+    addEmployeeForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent default form submission
+
+        const formData = new FormData(addEmployeeForm);
+        const payload = Object.fromEntries(formData.entries());
+
+        try {
+            const response = await fetch('/api/employees', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            // Clear the form and refresh the employee list
+            addEmployeeForm.reset();
+            await fetchAndDisplayEmployees();
+
+        } catch (error) {
+            alert(`Failed to add employee: ${error.message}`);
+            console.error('Error adding employee:', error);
+        }
+    });
+
+    // Initial load of employee data
+    fetchAndDisplayEmployees();
 });

@@ -13,6 +13,33 @@
     </header>
 
     <main>
+        <section id="add-employee-section">
+            <h3>Ajouter un Nouvel Employé</h3>
+            <form id="add-employee-form">
+                <div class="form-group">
+                    <label for="name">Nom Complet</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="cin">CIN</label>
+                    <input type="text" id="cin" name="cin" required>
+                </div>
+                <div class="form-group">
+                    <label for="post">Poste</label>
+                    <input type="text" id="post" name="post" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Statut</label>
+                    <select id="status" name="status" required>
+                        <option value="Active">Actif</option>
+                        <option value="Retired">Retraité</option>
+                        <option value="Contractual">Contractuel</option>
+                    </select>
+                </div>
+                <button type="submit">Ajouter l'Employé</button>
+            </form>
+        </section>
+
         <section id="employee-list-section">
             <h3>Liste des Employés</h3>
             <div id="employee-list-container">
